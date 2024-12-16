@@ -1,0 +1,25 @@
+﻿<Page x:Class="RepairWPF.View.RequestsView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:RepairWPF.ViewModel"
+        Title="Заявки" Height="450" Width="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <DataGrid ItemsSource="{Binding Requests}" AutoGenerateColumns="False" Grid.Row="0">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Дата" Binding="{Binding StartDate}" />
+                <DataGridTextColumn Header="Описание проблемы" Binding="{Binding ProblemDescription}" />
+                <DataGridTextColumn Header="Статус" Binding="{Binding StatusId}" />
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
+            <TextBox Width="200" Text="{Binding ProblemDescription}" />
+            <Button Content="Добавить" Command="{Binding AddRequestCommand}" Margin="5,0,0,0" />
+        </StackPanel>
+    </Grid>
+</Page>

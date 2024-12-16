@@ -1,31 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using RepairWPF.View;
+using System;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using RepairWPF.View;
 
 namespace RepairWPF.ViewModel
 {
     public class MainWindowViewModel
     {
-        public ICommand OpenRequestsViewCommand { get; set; }
+        public ICommand OpenRequestsViewCommand { get; }
 
         public MainWindowViewModel()
         {
             OpenRequestsViewCommand = new RelayCommand(OpenRequestsView);
         }
 
-        private void OpenRequestsView()
+        private void OpenRequestsView(object parameter)
         {
-            var requestPage = new View.RequestsView();
-            var frame = Application.Current.MainWindow.FindName("MainFrame") as Frame;
-            frame?.Navigate(requestPage);
+            var requestsView = new RequestsView();
+            requestsView.Show();
         }
     }
-
 }

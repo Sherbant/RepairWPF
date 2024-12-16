@@ -1,25 +1,55 @@
-﻿<Page x:Class="RepairWPF.View.RequestsView"
+﻿<Window x:Class="RepairWPF.View.RequestsView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:RepairWPF.ViewModel"
-        Title="Заявки" Height="450" Width="800">
-    <Grid>
+        mc:Ignorable="d"
+        Title="Requests Management" Height="500" Width="800">
+    <Window.DataContext>
+        <local:RequestsViewModel />
+    </Window.DataContext>
+
+    <Grid Margin="10">
         <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*" />
+            <!-- Таблица -->
+            <RowDefinition Height="Auto" />
+            <!-- Поля ввода и кнопки -->
         </Grid.RowDefinitions>
 
-        <DataGrid ItemsSource="{Binding Requests}" AutoGenerateColumns="False" Grid.Row="0">
+        <!-- Таблица для отображения запросов -->
+        <DataGrid ItemsSource="{Binding Requests}" AutoGenerateColumns="False" CanUserAddRows="False"
+                  Grid.Row="0" Margin="0,0,0,10" HeadersVisibility="Column">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Дата" Binding="{Binding StartDate}" />
-                <DataGridTextColumn Header="Описание проблемы" Binding="{Binding ProblemDescription}" />
-                <DataGridTextColumn Header="Статус" Binding="{Binding StatusId}" />
+                <DataGridTextColumn Header="Описание проблемы" Binding="{Binding ProblemDescription}" Width="*"/>
+                <DataGridTextColumn Header="Дата начала" Binding="{Binding StartDate}" Width="150"/>
+
+                <!-- ComboBox для изменения статуса -->
+                <DataGridTemplateColumn Header="Статус" Width="150">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding StatusId}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                    <DataGridTemplateColumn.CellEditingTemplate>
+                        <DataTemplate>
+                            <ComboBox ItemsSource="{Binding DataContext.Statuses, RelativeSource={RelativeSource AncestorType=Window}}"
+                                      SelectedValuePath="Id"
+                                      DisplayMemberPath="Name"
+                                      SelectedValue="{Binding StatusId, UpdateSourceTrigger=PropertyChanged}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellEditingTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
 
-        <StackPanel Orientation="Horizontal" Grid.Row="1" Margin="5">
-            <TextBox Width="200" Text="{Binding ProblemDescription}" />
-            <Button Content="Добавить" Command="{Binding AddRequestCommand}" Margin="5,0,0,0" />
+        <!-- Панель для добавления новых запросов -->
+        <StackPanel Orientation="Horizontal" Grid.Row="1" VerticalAlignment="Center">
+            <TextBox Text="{Binding ProblemDescription, UpdateSourceTrigger=PropertyChanged}" 
+                     Width="300" Margin="0,0,10,0" VerticalAlignment="Center" />
+            <Button Content="Добавить запрос" Command="{Binding AddRequestCommand}" 
+                    Width="150" VerticalAlignment="Center" />
         </StackPanel>
     </Grid>
-</Page>
+</Window>

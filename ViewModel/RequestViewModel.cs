@@ -1,74 +1,63 @@
-﻿using RepairWPF.Models;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
+using RepairWPF.Models;
 
 namespace RepairWPF.ViewModel
 {
-    public class RequestViewModel : INotifyPropertyChanged
+    public class RequestsViewModel
     {
-        private string _problemDescription;
-        private ObservableCollection<Request> _requests;
+        public ObservableCollection<Request> Requests { get; set; }
 
-        public string ProblemDescription
+        public ObservableCollection<Status> Statuses { get; set; }
+
+        public string ProblemDescription { get; set; }
+
+        public RelayCommand AddRequestCommand { get; set; }
+
+        public RequestsViewModel()
         {
-            get => _problemDescription;
-            set
+            Statuses = new ObservableCollection<Status>
             {
-                _problemDescription = value;
-                OnPropertyChanged(nameof(ProblemDescription));
-            }
-        }
-
-        public ObservableCollection<Request> Requests
-        {
-            get => _requests;
-            set
-            {
-                _requests = value;
-                OnPropertyChanged(nameof(Requests));
-            }
-        }
-
-        public ICommand AddRequestCommand { get; }
-
-        public RequestViewModel()
-        {
-            Requests = new ObservableCollection<Request>();
-            AddRequestCommand = new RelayCommand(AddRequest); 
-        }
-
-        private void AddRequest()
-        {
-            var newRequest = new Request
-            {
-                ProblemDescription = ProblemDescription,
-                StartDate = DateOnly.FromDateTime(DateTime.Now), 
-                StatusId = 1
+                new Status { Id = 1, Name = "Новый" },
+                new Status { Id = 2, Name = "В работе" },
+                new Status { Id = 3, Name = "Готово" }
             };
 
-            Requests.Add(newRequest);
-            ProblemDescription = string.Empty;
+            Requests = new ObservableCollection<Request>
+            {
+                new Request
+                {
+                    ProblemDescription = "Сломан телевизор",
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    StatusId = 1,
+                    Status = Statuses[0]
+                },
+                new Request
+                {
+                    ProblemDescription = "Не работает холодильник",
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    StatusId = 2,
+                    Status = Statuses[1]
+                }
+            };
+
+            AddRequestCommand = new RelayCommand(AddRequest);
         }
 
-        private void LoadRequests()
+        private void AddRequest(object parameter)
         {
-            using (var context = new RepairDbContext())
+            if (!string.IsNullOrWhiteSpace(ProblemDescription))
             {
-                var requests = context.Requests.ToList();
-                Requests = new ObservableCollection<Request>(requests);
+                Requests.Add(new Request
+                {
+                    ProblemDescription = ProblemDescription,
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    StatusId = 1,
+                    Status = Statuses[0]
+                });
+
+                ProblemDescription = string.Empty;
             }
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }
